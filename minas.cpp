@@ -3,13 +3,15 @@
 #include <time.h>
 
 
+
 using namespace std;
 
-const int TAM = 9;	
+const int TAM = 8;	
 
 int campo[TAM][TAM] = {0};
 int quant[TAM][TAM] = {0};
 int jog[TAM][TAM]= {};
+
 
 //funcoes
 int geraMina();
@@ -18,6 +20,7 @@ int tranfQuantCampo();
 int minasProx(int x, int y);
 int jogo();
 int liberaRecursiv(int x, int y);
+int testaQuantJogadas();
 
 
 int main() {
@@ -30,12 +33,13 @@ int main() {
 
 	tranfQuantCampo();
 
-	
+	/*
 	for(int j = 0; j < TAM; j++) {
 		for(int k = 0; k < TAM; k++)
 			cout<<campo[j][k]<<' ';
 		cout<<endl;
 	}
+	*/
 	
 
 	jogo();
@@ -105,9 +109,13 @@ int tranfQuantCampo() {
 }
 
 int jogo() {
+
+	system("clear");	//limpa a tela
+
 	int perdeu = 0, ganhou = 0;
 	int um, dois;
-	int quantJogadas = TAM * TAM;
+	int quantJogadas=0;
+	char marca;
 
 	for(int j = 0; j < TAM; j++) {
 		for(int k = 0; k < TAM; k++) 
@@ -115,22 +123,33 @@ int jogo() {
 	}
 
 	while (perdeu != 1 && ganhou != 1) {
-		cin>>um>>dois;
+		cin>>um>>dois>>marca;
 		cout<<endl;
 
-		//hack
+		//hack para ganhar
 		if(um == 42)
 			ganhou = 1;
 		
-		jog[um][dois] = campo[um][dois];
+		if (marca == 'x')
+			jog[um][dois] = 8;
+		else
+			jog[um][dois] = campo[um][dois];
 
 		if(jog[um][dois] == 0) {  //quando as coordenadas selecionadas forem zero, mostrar o campo dos vizinhos também
 			liberaRecursiv(um, dois);
 		}
 		
 		for(int j = 0; j < TAM; j++) {
-			for(int k = 0; k < TAM; k++)
-				cout<<jog[j][k]<<' ';
+			for(int k = 0; k < TAM; k++){
+				if(jog[j][k] == 9)
+					cout<<"-"<<' ';
+				else if(jog[j][k] == 8)
+					cout<<"x"<<' ';
+				else if(jog[j][k] == -1)
+						cout<<"#"<<' ';
+				else
+					cout<<jog[j][k]<<' ';				
+			}
 			cout<<endl;
 		}
 		cout<<endl;
@@ -146,20 +165,23 @@ int jogo() {
 			}
 			for(int j = 0; j < TAM; j++) {
 				for(int k = 0; k < TAM; k++)
-					cout<<jog[j][k]<<' ';
+					if(jog[j][k] == 9)
+						cout<<"-"<<' ';
+					else if(jog[j][k] == -1)
+						cout<<"#"<<' ';
+					else
+						cout<<jog[j][k]<<' ';
 				cout<<endl;
 			}
 			perdeu = 1;
 		}
 
-
+		quantJogadas = testaQuantJogadas();
 		if(quantJogadas == TAM+1) 
 			ganhou = 1;
-
-		quantJogadas--;
-		cout<<quantJogadas<<endl;
 			
 	}
+
 	if(perdeu)
 		cout<<"perdeu";
 	if(ganhou)
@@ -171,22 +193,32 @@ int jogo() {
 int prov[TAM][TAM] = {0};
 
 int liberaRecursiv(int x, int y) {	//ainda tá com problema na recursividade
-
+	prov[x][y] = -1;
 	for(int a = -1; a <= 1; a++) {
 		for(int b = -1; b <= 1; b++) {
 			if(x+a >= 0 && x+a < TAM && y+b >= 0 && y+b < TAM) {
 				jog[x+a][y+b] = campo[x+a][y+b];
-				prov[x][y] = -1;
 		
-				if(jog[x+a][y+b] == 0 && prov[x+a][y+b] != -1)
-					return liberaRecursiv(x+a,y+b);		
+				if(jog[x+a][y+b] == 0 && prov[x+a][y+b] != -1) 
+					return liberaRecursiv(x+a, y+b);					
 									
 			}
 
 		}
 	}
-
 	return 0;
+}
+
+int testaQuantJogadas() {
+	int qJs = 0;
+	for(int j = 0; j < TAM; j++) {
+				for(int k = 0; k < TAM; k++) {
+					if(jog[j][k] == 9 || jog[j][k] == 8)
+						qJs++;
+				}
+	}
+
+	return qJs;
 }
 
 
