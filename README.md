@@ -4,5 +4,8 @@ minha versão do campo minado, feito em c++.
 
 Falta algumas melhorias 
 
-Funciona colocando duas cordenadas, a primeira X e a segunda Y. Cada vez que por as entradas o campo será mostrado, com o quadrante selecionado sendo exposto.
-o 9 representa um quadrante coberto.
+Versão para terminal. Para jogar, bastar dar três entradas, 1. a cordenada para a linha, numero inteiro 2. a cordenada para a coluna, numero inteiro 3. um caractere para marcar o local da mina, digite x para marcar ou qualquer outro simbolo para simplesmente descobrir o quadrante
+
+a recursividade está um pouco estranha ainda
+
+aproveite :v
