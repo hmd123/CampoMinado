@@ -12,6 +12,10 @@ int campo[TAM][TAM] = {0};
 int quant[TAM][TAM] = {0};
 int jog[TAM][TAM]= {};
 
+struct pontuacao{
+	int jogada;
+	int marcacao;
+};
 
 //funcoes
 int geraMina();
@@ -20,7 +24,7 @@ int tranfQuantCampo();
 int minasProx(int x, int y);
 int jogo();
 int liberaRecursiv(int x, int y);
-int testaQuantJogadas();
+pontuacao testaQuantJogadas();
 
 
 int main() {
@@ -111,9 +115,10 @@ int tranfQuantCampo() {
 int jogo() {
 
 	system("clear");	//limpa a tela
+	cout<<" Bem vindo ao Campo Minado "<<endl<<endl;
 
 	int perdeu = 0, ganhou = 0;
-	int um, dois;
+	int um, dois, marcada=0;
 	int quantJogadas=0;
 	char marca;
 
@@ -123,14 +128,15 @@ int jogo() {
 	}
 
 	while (perdeu != 1 && ganhou != 1) {
+
 		cin>>um>>dois>>marca;
 		cout<<endl;
 
 		//hack para ganhar
-		if(um == 42)
+		if(um == 42 && dois == 42)
 			ganhou = 1;
 		
-		if (marca == 'x')
+		if (marca == 'x' && jog[um][dois] == 9)
 			jog[um][dois] = 8;
 		else
 			jog[um][dois] = campo[um][dois];
@@ -138,9 +144,18 @@ int jogo() {
 		if(jog[um][dois] == 0) {  //quando as coordenadas selecionadas forem zero, mostrar o campo dos vizinhos também
 			liberaRecursiv(um, dois);
 		}
-		
+
+		cout<<"   ";
 		for(int j = 0; j < TAM; j++) {
-			for(int k = 0; k < TAM; k++){
+			cout<<j<<" ";
+		}		
+		cout<<endl;
+		cout<<endl;
+
+		for(int j = 0; j < TAM; j++) {
+			cout<<j<<"  ";
+			for(int k = 0; k < TAM; k++){				
+				
 				if(jog[j][k] == 9)
 					cout<<"-"<<' ';
 				else if(jog[j][k] == 8)
@@ -176,17 +191,22 @@ int jogo() {
 			perdeu = 1;
 		}
 
-		quantJogadas = testaQuantJogadas();
-		if(quantJogadas == TAM+1) 
+		quantJogadas = testaQuantJogadas().jogada;
+		marcada = testaQuantJogadas().marcacao;
+
+		if(quantJogadas == TAM+1 || (marcada == TAM+1 && !perdeu)) 
 			ganhou = 1;
 			
 	}
 
 	if(perdeu)
-		cout<<"perdeu";
+		cout<<"Você perdeu!! ";
 	if(ganhou)
-		cout<<"ganhou";
+		cout<<"Você ganhou!! ";
 	cout<<endl;
+	cout<<endl;
+
+	return 0;
 
 }
 
@@ -209,16 +229,17 @@ int liberaRecursiv(int x, int y) {	//ainda tá com problema na recursividade
 	return 0;
 }
 
-int testaQuantJogadas() {
-	int qJs = 0;
+pontuacao testaQuantJogadas() {
+	int qJs = 0, marcs = 0;
 	for(int j = 0; j < TAM; j++) {
 				for(int k = 0; k < TAM; k++) {
 					if(jog[j][k] == 9 || jog[j][k] == 8)
 						qJs++;
+					if(jog[j][k] == 8 && campo[j][k] ==  -1) 
+						marcs++;
 				}
 	}
-
-	return qJs;
+	return {qJs, marcs};
 }
 
 
